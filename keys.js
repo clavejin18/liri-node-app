@@ -1,3 +1,5 @@
+js
+var keys = require("./keys.js");
 console.log('this is loaded');
 
 exports.spotify = {
