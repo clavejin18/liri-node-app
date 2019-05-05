@@ -78,31 +78,60 @@ function movie() {
     // requiring axios code
     var axios = require('axios')
 
-    // Searching for movie. 
-    var searchedMovie = process.argv.slice(3).join(" ")
+    if (process.argv.slice(3).join(" ") != true) {
+        var searchedMovie = "Mr. Nobody"
+        // running a movie search with axios to OMDB API
+        var queryUrl = `http://www.omdbapi.com/?t=${searchedMovie}&y=&plot=short&apikey=trilogy`
 
-    // running a movie search with axios to OMDB API
-    var queryUrl = `http://www.omdbapi.com/?t=${searchedMovie}&y=&plot=short&apikey=trilogy`
+        // Creating the request with axios using the queryURl
+        console.log(`----- Results -----`)
+        axios.get(queryUrl).then(function (response) {
+            var jsonData = response.data;
+            var showMovie = [
+                "Title: " + jsonData.Title,
+                "Year: " + jsonData.Year,
+                "IMDB Rating: " + jsonData.imdbRating,
+                "Rotten Tomatoes Rating: " + jsonData.Ratings[1].Value,
+                "Language(s): " + jsonData.Language,
+                "Plot: " + jsonData.Plot,
+                "Actors: " + jsonData.Actors
+            ].join("\n\n");
+            console.log(showMovie)
+            console.log("----- End Of Results -----")
+        })
 
-    // Creating the request with axios using the queryURl
-    console.log(`----- Results -----`)
-    axios.get(queryUrl).then(function (response) {
-        var jsonData = response.data;
-        var showMovie = [
-            "Title: " + jsonData.Title,
-            "Year: " + jsonData.Year,
-            "IMDB Rating: " + jsonData.imdbRating,
-            "Rotten Tomatoes Rating: " + jsonData.Ratings[1].Value,
-            "Language(s): " + jsonData.Language,
-            "Plot: " + jsonData.Plot,
-            "Actors: " + jsonData.Actors
-        ].join("\n\n");
-        console.log(showMovie)
-        console.log("----- End Of Results -----")
-    })
+            // documenting errors
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+    else {
+        // storing movie variable
+        var searchedMovie = process.argv.slice(3).join(" ")
+        // running a movie search with axios to OMDB API
+        var queryUrl = `http://www.omdbapi.com/?t=${searchedMovie}&y=&plot=short&apikey=trilogy`
+        console.log(queryUrl);
 
-        // documenting errors
-        .catch(function (error) {
-            console.log(error);
-        });
+        // Creating the request with axios using the queryURl
+        console.log(`----- Results -----`)
+        axios.get(queryUrl).then(function (response) {
+            var jsonData = response.data;
+            var showMovie = [
+                "Title: " + jsonData.Title,
+                "Year: " + jsonData.Year,
+                "IMDB Rating: " + jsonData.imdbRating,
+                "Rotten Tomatoes Rating: " + jsonData.Ratings[1].Value,
+                "Language(s): " + jsonData.Language,
+                "Plot: " + jsonData.Plot,
+                "Actors: " + jsonData.Actors
+            ].join("\n\n");
+            console.log(showMovie)
+            console.log("----- End Of Results -----")
+        })
+
+            // documenting errors
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 }
