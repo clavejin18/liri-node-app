@@ -48,6 +48,10 @@ function concertSearch() {
     console.log(`Artist/Band: ${artist}`);
     console.log('')
     axios.get(queryURl).then(function (response) {
+        if (response.data.length == 0) {
+            console.log("No Upcoming Events")
+        }
+        else {
         var jsonData = response.data;
         // A loop that displays all upcoming concerts
         console.log('* Upcoming Events *');
@@ -63,6 +67,7 @@ function concertSearch() {
             console.log('--------------');
         }
         console.log('----- End Of Results -----')
+    }
     })
 
         // documenting errors
