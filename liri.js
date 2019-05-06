@@ -1,28 +1,19 @@
 //setting environment variables
 require("dotenv").config();
 
-// importing and storing keys
-var keys = require("./keys.js");
-
-// Setting moment variable
-var moment = require('moment');
-
-// spotify 
-//var spotify = new Spotify(keys.spotify);
-
 // code for taking in arguments
 var inputString = process.argv
 
 // code for taking the last parameter
-var operand = inputString[2]
+var userInput = inputString[2]
 
 // cases depending on the type of inputString
-switch (operand) {
+switch (userInput) {
     case 'concert-this':
         concertSearch();
         break;
     case 'spotify-this-song':
-        console.log("you will be searching for songs")
+        spotifySearch();
         break;
     case 'movie-this':
         movie();
@@ -33,9 +24,9 @@ switch (operand) {
 }
 // concert function 
 function concertSearch() {
-    // Searching with axios
-    var axios = require(`axios`);
-
+    // required functions 
+    var moment = require('moment');
+    var axios = require('axios');
     // Searching for concerts by artist
     var artist = process.argv.slice(3).join(" ");
 
@@ -52,22 +43,22 @@ function concertSearch() {
             console.log("No Upcoming Events")
         }
         else {
-        var jsonData = response.data;
-        // A loop that displays all upcoming concerts
-        console.log('* Upcoming Events *');
-        console.log('');
-        for (index = 0, counter = 1; index < jsonData.length; index++ , counter++) {
-            console.log(`Event ${counter} :`)
-            var eventDays = [
-                "Venue: " + jsonData[index].venue.name,
-                "Venue Location: " + jsonData[index].venue.city + "," + jsonData[index].venue.country,
-                "Date Of Event: " + moment(jsonData[index].datetime).format("MM/DD/YYYY") + " at " + moment(jsonData[index].datetime).format('LT')
-            ].join("\n\n");
-            console.log(eventDays);
-            console.log('--------------');
+            var jsonData = response.data;
+            // A loop that displays all upcoming concerts
+            console.log('* Upcoming Events *');
+            console.log('');
+            for (index = 0, counter = 1; index < jsonData.length; index++ , counter++) {
+                console.log(`Event ${counter} :`)
+                var eventDays = [
+                    "Venue: " + jsonData[index].venue.name,
+                    "Venue Location: " + jsonData[index].venue.city + "," + jsonData[index].venue.country,
+                    "Date Of Event: " + moment(jsonData[index].datetime).format("MM/DD/YYYY") + " at " + moment(jsonData[index].datetime).format('LT')
+                ].join("\n\n");
+                console.log(eventDays);
+                console.log('--------------');
+            }
+            console.log('----- End Of Results -----')
         }
-        console.log('----- End Of Results -----')
-    }
     })
 
         // documenting errors
@@ -78,15 +69,70 @@ function concertSearch() {
 
 
 }
+function spotifySearch() {
+    // required functions
+    var Spotify = require('node-spotify-api');
+    var keys = require("./keys.js");
+    var moment = require('moment');
+
+    // spotify 
+    var spotify = new Spotify(keys.spotify)
+
+    // When no song is typed for the 3rd argument 
+    var searchSong = process.argv.slice(3).join(" ");
+    if (searchSong === '') {
+        defaultSong = "The Sign";
+        // Spotify Search
+        search = spotify.search({ type: 'track', query: `${defaultSong}`, limit: 20 }, function (err, data) {
+            if (err) {
+                return console.log('Error occurred: ' + err);
+            }
+            //Displaying 15 searches
+            for (index = 0; index < 15; index++) {
+                display = `Artist(s): ${data.tracks.items[index].artists[0].name}
+                Song Name: ${data.tracks.items[index].name}
+                Preview Link: ${data.tracks.items[index].preview_url}
+                Album: ${data.tracks.items[index].album.name}
+                Length Of Track: ${moment(data.tracks.items[index].duration_ms).format('mm:ss')}`
+                console.log(display)
+            }
+
+        });
+    }
+
+    else {
+
+        // Spotify Search
+        spotify.search({ type: 'track', query: `${searchSong}`, limit: 20 }, function (err, data) {
+            if (err) {
+                return console.log('Error occurred: ' + err);
+            }
+
+            //display search
+            for (index = 0; index < 15; index++) {
+                display = `Artist(s): ${data.tracks.items[index].artists[0].name}
+                Song Name: ${data.tracks.items[index].name}
+                Preview Link: ${data.tracks.items[index].preview_url}
+                Album: ${data.tracks.items[index].album.name}
+                Length Of Track: ${moment(data.tracks.items[index].duration_ms).format('mm:ss')}`
+                console.log(display)
+            }
+        });
+    }
+
+}
 // Movie function
 function movie() {
-    // requiring axios code
-    var axios = require('axios')
+    // required functions 
+    var axios = require('axios');
 
-    if (process.argv.slice(3).join(" ") != true) {
-        var searchedMovie = "Mr. Nobody"
+    // storing movie variable
+    var searchedMovie = process.argv.slice(3).join(" ")
+
+    if (searchedMovie === '') {
+        var defaultMovie = "Mr. Nobody"
         // running a movie search with axios to OMDB API
-        var queryUrl = `http://www.omdbapi.com/?t=${searchedMovie}&y=&plot=short&apikey=trilogy`
+        var queryUrl = `http://www.omdbapi.com/?t=${defaultMovie}&y=&plot=short&apikey=trilogy`
 
         // Creating the request with axios using the queryURl
         console.log(`----- Results -----`)
@@ -111,11 +157,8 @@ function movie() {
             });
     }
     else {
-        // storing movie variable
-        var searchedMovie = process.argv.slice(3).join(" ")
         // running a movie search with axios to OMDB API
         var queryUrl = `http://www.omdbapi.com/?t=${searchedMovie}&y=&plot=short&apikey=trilogy`
-        console.log(queryUrl);
 
         // Creating the request with axios using the queryURl
         console.log(`----- Results -----`)
