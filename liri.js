@@ -83,39 +83,54 @@ function spotifySearch() {
     if (searchSong === '') {
         defaultSong = "The Sign";
         // Spotify Search
-        search = spotify.search({ type: 'track', query: `${defaultSong}`, limit: 20 }, function (err, data) {
+        search = spotify.search({ type: 'track', query: `${defaultSong}`, limit: 50 }, function (err, data) {
             if (err) {
                 return console.log('Error occurred: ' + err);
             }
-            //Displaying 15 searches
-            for (index = 0; index < 15; index++) {
-                display = `Artist(s): ${data.tracks.items[index].artists[0].name}
-                Song Name: ${data.tracks.items[index].name}
-                Preview Link: ${data.tracks.items[index].preview_url}
-                Album: ${data.tracks.items[index].album.name}
-                Length Of Track: ${moment(data.tracks.items[index].duration_ms).format('mm:ss')}`
-                console.log(display)
+            //Displaying specific song
+            console.log('')
+            console.log("Specified Searched Song List From Spotify API:")
+            console.log('')
+            for (index = 0, counter =1 ; index < 50; index++) {
+                if (`${defaultSong}` === `${data.tracks.items[index].name}`) {
+                    console.log(`Song ${counter} :`)
+                    counter++;
+                    display = `Artist(s): ${data.tracks.items[index].artists[0].name}
+                    Song Name: ${data.tracks.items[index].name}
+                    Preview Link: ${data.tracks.items[index].preview_url}
+                    Album: ${data.tracks.items[index].album.name}
+                    Length Of Track: ${moment(data.tracks.items[index].duration_ms).format('mm:ss')}`
+                    console.log(display)
+                    console.log("----------------------")
+                }
             }
-
         });
     }
 
     else {
 
         // Spotify Search
-        spotify.search({ type: 'track', query: `${searchSong}`, limit: 20 }, function (err, data) {
+        spotify.search({ type: 'track', query: `${searchSong}`, limit: 50 }, function (err, data) {
             if (err) {
                 return console.log('Error occurred: ' + err);
             }
 
-            //display search
-            for (index = 0; index < 15; index++) {
-                display = `Artist(s): ${data.tracks.items[index].artists[0].name}
-                Song Name: ${data.tracks.items[index].name}
-                Preview Link: ${data.tracks.items[index].preview_url}
-                Album: ${data.tracks.items[index].album.name}
-                Length Of Track: ${moment(data.tracks.items[index].duration_ms).format('mm:ss')}`
-                console.log(display)
+            //Displaying specific searched song
+            console.log('')
+            console.log("Specified Searched Song List From Spotify API:")
+            console.log('')
+            for (index = 0, counter =1 ; index < 50; index++) {
+                if (`${searchSong}` === `${data.tracks.items[index].name}`) {
+                    console.log(`Song ${counter} :`)
+                    counter++;
+                    display = `Artist(s): ${data.tracks.items[index].artists[0].name}
+                    Song Name: ${data.tracks.items[index].name}
+                    Preview Link: ${data.tracks.items[index].preview_url}
+                    Album: ${data.tracks.items[index].album.name}
+                    Length Of Track: ${moment(data.tracks.items[index].duration_ms).format('mm:ss')}`
+                    console.log(display)
+                    console.log("----------------------")
+                }
             }
         });
     }
