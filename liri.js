@@ -19,7 +19,7 @@ switch (userInput) {
         movie();
         break;
     case 'do-what-it-says':
-        console.log("you will be searching for something")
+        readFile();
         break;
 }
 // concert function 
@@ -91,15 +91,15 @@ function spotifySearch() {
             console.log('')
             console.log("Specified Searched Song List From Spotify API:")
             console.log('')
-            for (index = 0, counter =1 ; index < 50; index++) {
+            for (index = 0, counter = 1; index < 50; index++) {
                 if (`${defaultSong}` === `${data.tracks.items[index].name}`) {
                     console.log(`Song ${counter} :`)
                     counter++;
-                    display = `Artist(s): ${data.tracks.items[index].artists[0].name}
+                    var display = [`Artist(s): ${data.tracks.items[index].artists[0].name}
                     Song Name: ${data.tracks.items[index].name}
                     Preview Link: ${data.tracks.items[index].preview_url}
                     Album: ${data.tracks.items[index].album.name}
-                    Length Of Track: ${moment(data.tracks.items[index].duration_ms).format('mm:ss')}`
+                    Length Of Track: ${moment(data.tracks.items[index].duration_ms).format('mm:ss')}`].join("\n\n")
                     console.log(display)
                     console.log("----------------------")
                 }
@@ -119,7 +119,7 @@ function spotifySearch() {
             console.log('')
             console.log("Specified Searched Song List From Spotify API:")
             console.log('')
-            for (index = 0, counter =1 ; index < 50; index++) {
+            for (index = 0, counter = 1; index < 50; index++) {
                 if (`${searchSong}` === `${data.tracks.items[index].name}`) {
                     console.log(`Song ${counter} :`)
                     counter++;
@@ -196,5 +196,38 @@ function movie() {
             .catch(function (error) {
                 console.log(error);
             });
+    }
+}
+function readFile() {
+    // requirements 
+    const fs = require('fs');
+
+    // read the random.txt file
+    fs.readFile('random.txt', 'utf8', function (error, data) {
+        // In case of errors 
+        if (error) {
+            return console.log(error)
+        }
+        // split the text file data by commas and place into an array
+        var dataArr = data.split(',')
+
+        // assign command and query values based on the text file data
+        userInput = dataArr[0];
+        searchSong = dataArr[1];
+        autoInput(dataArr[0], dataArr[1]);
+    })
+
+}
+function autoInput() {
+    switch (userInput) {
+        case 'concert-this':
+            concertSearch();
+            break;
+        case 'spotify-this-song':
+            spotifySearch();
+            break;
+        case 'movie-this':
+            movie();
+            break;
     }
 }
